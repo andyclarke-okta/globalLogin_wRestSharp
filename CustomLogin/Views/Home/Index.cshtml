@@ -1,0 +1,87 @@
+﻿@{
+    ViewBag.Title = "Login Page";
+}
+
+
+@*<div id="loginverification"  class="infobox infobox-error infobox-compact icon-16 clear signin-feedback" style="display:none" >
+        <span class="glyphicon glyphicon-exclamation-sign form-alert"></span>
+        <p id="errmessage"> </p>
+    </div>*@
+<div id="signin-box" class="rounded-6 sign-in-content">
+    <p id="demo"></p>
+
+    <form action="~/Home/Route" method="post" id="logincredentials" class="v-form" onsubmit="return validateForm()" autocomplete="off" style="border:none;">
+        @Html.ValidationSummary(true)
+        @Html.AntiForgeryToken()
+        <fieldset style="display:block;">
+            <legend id="signInLabel"> Login</legend>
+            <p>&nbsp</p>
+            <input id="location" name="location" type="hidden" value="none" placeholder="" />
+            <input id="relayState" name="relayState" type="hidden" value="@TempData["relayState"]" placeholder="" />
+            <div class="inline-label-wrap margin-btm-10">
+                <label id="usernameLabel" for="txtUsername" class="first margin-0">Username</label>
+                <input name="txtUsername" id="txtUsername" type="text" value="@TempData["userName"]" onfocus="hidebanner(document.getElementById('loginverification'))" tabindex="1">
+            </div>
+            <br />
+
+            <div class="inline-label-wrap margin-btm-10">
+                <label id="passwordLabel" for="txtPassword" class="margin-0">Password</label>
+                <input name="txtPassword" id="txtPassword" type="password" autocomplete="off" value="" onfocus="hidebanner(document.getElementById('loginverification'))" tabindex="2">
+            </div>
+            <br />
+            <input type="hidden" class="hide" name="_xsrfToken" value="c51bd3a922c69a599969f9af8850a2b64e7868ee"><input type="hidden" id="domain" name="domain" class="hidden">
+            <input type="hidden" id="fromURI" name="fromURI" class="hidden" value="">
+            <input type="hidden" id="isChromeOs" name="isChromeOs">
+            <input value="Sign In" name="login" type="submit" id="signin-button" class="button allow-in-read-only allow-in-safe-mode" tabindex="4">
+        </fieldset>
+        <div class="form-group">
+            <input id="relayState" name="relayState" value="@ViewData["relayState"]" type="hidden" placeholder="" />
+        </div>
+
+    </form>
+
+
+
+    <div id="help-links">
+        <a id="forgotpwd" href="~/ForgotPassword/InitiateForgot">Forgot password?</a>
+        <span class="link-separator"> | </span>
+        <a id="helplink" href="@ViewData["HelpLink"]" class="inline-block margin-l-10">Help</a>
+        @*<a id="helplink" href="~/Home/Help" class="inline-block margin-l-10">Help</a>*@
+    </div>
+</div> <!-- signin block-->
+
+
+<script>
+    (function () {
+        var url = window.location.href;
+        var arr = url.split("/");
+        var result = arr[0] + "//" + arr[2];
+        //document.getElementById("demo").innerHTML = result;
+        document.forms["logincredentials"]["location"].value = result;
+    })();
+</script>
+
+<script>
+    function validateForm() {
+        var x = document.forms["logincredentials"]["txtUsername"].value;
+        var y = document.forms["logincredentials"]["txtPassword"].value;
+        if (x == null || x == "" || y == null || y == "") {
+            document.getElementById("errmessage").innerHTML = "fields must be filled in";
+            showbanner(document.getElementById("loginverification"));
+            return false;
+        }
+    }
+
+    function showbanner(which) {
+        if (!document.getElementById)
+            return
+            which.style.display = "inherit"
+    }
+
+    function hidebanner(which) {
+        if (!document.getElementById)
+            return
+        which.style.display = "none"
+    }
+
+</script>

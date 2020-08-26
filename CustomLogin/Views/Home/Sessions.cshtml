@@ -1,0 +1,72 @@
+﻿
+
+
+<h2>Sessions</h2>
+
+<div>
+    <p id="demo"></p>
+    <p id="session_id"></p>
+
+
+</div>
+@*<script>
+    (function () {
+        var url = window.location.href;
+        var arr = url.split("/");
+        var result = arr[0] + "//" + arr[2];
+        document.getElementById("demo").innerHTML = result;
+     
+    })();
+</script>*@
+
+
+@*<script type="text/javascript">
+
+	// Variables
+		baseUrl = "https://aclarke.okta.com";
+		defaultUri = "http://localhost:65262/Landing.cshtml";
+
+	// +1 Point Handle Return URLs
+		var relayState = getParameterByName('relaystate');
+		if (relayState != null)
+			console.log('relayState', relayState);
+
+		var fromURI = getParameterByName('fromURI');
+		if (fromURI != null)
+			console.log('fromURI', fromURI);
+
+		var MyInfo = getParameterByName('MyInfo');
+		if (MyInfo != null)
+			console.log('MyInfo', MyInfo);
+
+
+	// Detect if user has session...
+		$.ajax({
+		   url: baseUrl + '/api/v1/sessions/me',
+		   type: 'GET',
+		   xhrFields: { withCredentials: true },
+		   accept: 'application/json'
+		})
+		.done(function(meData) {
+			console.log('me: ', meData);
+			console.log('session_id', meData.id);
+			document.getElementById("session_id").innerHTML = meData.id;
+
+			nextURI = getOpt(relayState, fromURI, defaultUri);
+
+			console.log("Just Redirect Here:", nextURI);
+			window.location = nextURI;
+
+		})
+		.fail(function(meData, textStatus, error) {
+			console.log('meData: ', meData);
+			console.log('meData.status: ', meData.status);
+			// console.log('statusText: ', meData.statusText);
+			// console.log('error: ', error);
+
+			// Initiate the login Widget
+		//	showLoginWidget(baseUrl);
+
+
+		});
+</script>*@

@@ -1,0 +1,151 @@
+﻿
+@{
+    ViewBag.Title = "Landing";
+}
+
+@*<style>
+    span#my_session_id {
+        background-color: red;
+        display: inline;
+    }
+</style>*@
+
+<h2 > alternate landing page</h2 >
+
+<text></text>
+
+
+<div style="display:inline; margin:10px; padding:10px;">
+    <span>HostName: </span>
+    <span id="demo"></span>
+</div>
+<br />
+<br />
+<div style="display:inline; margin:10px; padding:10px;">
+    <span id="session"></span>
+    <span  id="my_session_id"></span>
+</div>
+<br />
+<br />
+<div style="display:inline; margin:10px; padding:10px;">
+    <span id="Logout"></span>
+    <span id="Logout_data"></span>
+</div>
+
+<div style="display:block; margin:10px; padding:10px;">
+    <button onclick="displaySessions()" class="button allow-in-read-only allow-in-safe-mode float-n"> Display Sessions</button>
+    @*   <button onclick="logoutSessions()" style="float:right"> Logout Sessions</button>*@
+</div>
+
+
+<div style ="display:block; margin:10px; padding:10px;">
+    <form action="~/Home/ProcessSession" method="post" id="executeLogout" onsubmit="return processData()" autocomplete="off" style="border:none;">
+        @Html.ValidationSummary(true)
+        @Html.AntiForgeryToken()
+
+
+        <input name="session_data" id="session_data" type="hidden" value="no data">
+        <input id="logout_but" name="logout" type="submit" value="Logout User" class="button allow-in-read-only allow-in-safe-mode float-l" tabindex="1">
+        <input id="validate_but" name="validate_but" type="submit" value="Validate User Session" class="button allow-in-read-only allow-in-safe-mode float-r" tabindex="2">
+    </form>
+
+</div>
+
+
+
+
+
+    @*<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>*@
+    <script>
+        (function () {
+            var url = window.location.href;
+            var arr = url.split("/");
+            var result = arr[0] + "//" + arr[2];
+            document.getElementById("demo").innerHTML = result;
+
+        })();
+    </script>
+
+
+    <script type="text/javascript">
+
+        var myOktaOrg = "@TempData["oktaOrg"]";
+        var myToken = "@TempData["token"]";
+        var mySessionId = "no session data";
+
+
+        function processData() {
+            displaySessions();
+            //document.getElementById("session_data").value = mySessionId;
+        }
+
+
+        function logoutSessions() {
+            baseUrl = myOktaOrg;
+            document.getElementById("Logout").innerHTML = " Logout Session ";
+            document.getElementById("Logout_data").innerHTML = mySessionId;
+
+            // Detect if user has session...
+            $.ajax({
+                url: baseUrl + '/api/v1/sessions/' + mySessionId,
+                crossDomain: true,
+                type: 'DELETE',
+                xhrFields: { withCredentials: true },
+                headers: {
+                    'Authorization': 'SSWS ' + myToken,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    console.log(xhr.status);
+                    console.log(thrownError);
+                },
+                success: function (data) {
+                    console.log(data);
+                }
+            });
+
+        }
+
+
+        function displaySessions() {
+            // Variables
+            //baseUrl = "https://aclarke-neto.oktapreview.com";
+            baseUrl = myOktaOrg;
+            defaultUri = "http://si.com/";
+
+            document.getElementById("session").innerHTML = "Current Sessions Id: ";
+
+
+            // Detect if user has session...
+            $.ajax({
+                url: baseUrl + '/api/v1/sessions/me',
+                type: 'GET',
+                xhrFields: { withCredentials: true },
+                accept: 'application/json'
+            })
+            .done(function (meData) {
+                console.log('me: ', meData);
+                console.log('session_id', meData.id);
+                document.getElementById("my_session_id").innerHTML = meData.id;
+                document.getElementById("session_data").value = meData.id;
+                mySessionId = meData.id;
+
+                nextURI = getOpt(relayState, fromURI, defaultUri);
+
+                console.log("Just Redirect Here:", nextURI);
+                debugger;
+                // window.location = nextURI;
+
+            })
+            .fail(function (meData, textStatus, error) {
+                console.log('meData: ', meData);
+                console.log('meData.status: ', meData.status);
+                console.log('statusText: ', meData.statusText);
+                console.log('error: ', error);
+
+                document.getElementById("my_session_id").innerHTML = "No Session ID present";
+
+            });
+        }
+    </script>
